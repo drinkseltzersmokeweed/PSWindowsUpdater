@@ -39,6 +39,6 @@ While(-not $validAnswer)
 }
 
 Write-Host "Attempting to install the updates on $machineName"
-Invoke-WUJob -ComputerName $machineName -Script {ipmo PSWindowsUpdate; Install-WindowsUpdate -MicrosoftUpdate -AcceptAll -AutoReboot} -RunNow -Confirm:$false | Out-File "C:\temp\$machineName-$(Get-Date -f yyyy-MM-dd)-MSUpdates.log" -Force 
+Invoke-WUJob -ComputerName $machineName -Script {ipmo PSWindowsUpdate; Install-WindowsUpdate -MicrosoftUpdate -AcceptAll -AutoReboot} -RunNow -Confirm:$false | Out-File "\\$machineName\temp\$machineName-$(Get-Date -f yyyy-MM-dd)-MSUpdates.log" -Force 
 Write-Host "Update commmand completed on $machineName"
 
