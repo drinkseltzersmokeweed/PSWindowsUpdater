@@ -1,3 +1,22 @@
+#Let's ask if we can install the PSWindowsUpdate
+$validAnswer = $false
+While(-not $validAnswer)
+{
+    $yn = Read-Host "Do you want to install PSWindowsUpdate? (y/n)"
+    Switch($yn.ToLower())
+    {
+        "y" {$validAnswer = $true
+                #Let's install the PSWindowsUpdate app
+                Install-Module PSWindowsUpdate
+        }
+        "n" {$validAnswer = $true
+                #They said no, so leave
+                Exit 1
+        }
+        Default {Write-Host "Try entering 'y' or 'n'."}
+    }
+}
+
 #Create a new variable to hold the machine name - this can be modded to read a list or txt file, etc
 $machineName = Read-Host "What's the machine name"
 
@@ -19,13 +38,7 @@ While(-not $validAnswer)
     }
 }
 
-Write-Host "Attempting to get updates on $machineName"
-$UpdatesToInstall = Invoke-Command -ComputerName $machineName -ScriptBlock {Start-WUScan -SearchCriteria "UpdateId='' AND IsInstalled=1"}
-
-#Let's run the update commands now
-$cimSession = New-CimSession -ComputerName $machineName
-
 Write-Host "Attempting to install the updates on $machineName"
-Install-WUUpdates -Updates $UpdatesToInstall -CimSession $cimSession
-
+Invoke-WUJob -ComputerName $machineName -Script {ipmo PSWindowsUpdate; Install-WindowsUpdate -MicrosoftUpdate -AcceptAll -AutoReboot} -RunNow -Confirm:$false | Out-File "C:\temp\$machineName-$(Get-Date -f yyyy-MM-dd)-MSUpdates.log" -Force 
 Write-Host "Update commmand completed on $machineName"
+
